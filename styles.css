@@ -1,0 +1,40 @@
+/* styles.css */
+body, .input, .button {
+    font: normal 16px Verdana;
+    margin: 0;
+}
+
+.br {
+    margin: 0 0 10px;
+}
+
+.labelb {
+    display: block;
+}
+
+.label {
+    float: left;
+    width: 17%;
+}
+
+.input {
+    margin: 0 0 10px;
+    border: 1px solid #ddd;
+    padding: 10px 0;
+    width: 17%;
+}
+
+.button {
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    color: #333;
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #e8e8e8;
+}
