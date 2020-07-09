@@ -1,5 +1,5 @@
 {
-  "name": "q1",
+  "name": "q2",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jquery": "^3.5.1",
     "mithril": "^2.0.4"
   },
   "devDependencies": {
