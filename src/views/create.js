@@ -16,18 +16,7 @@ var dynamic_form = {
             m("div", "Field Name"),
             m("div", "Data Type"),
             m("div"),
-            m("input", {oninput: (e) => create_input.fields[0].name = e.target.value, value: create_input.fields[0].name}),
-            m("select", {oninput: (e) => create_input.fields[0].data = e.target.value, value: create_input.fields[0].data}, [
-                m("option[value=esriFieldTypeString]" , "String"),
-                m("option[value=esriFieldTypeInteger]", "Integer"),
-                m("option[value=esriFieldTypeDouble]","Double")
-            ]),
-            m("div"),
         ].concat(create_input.fields.map((row, index) => {
-            if (index == 0) {
-                return;
-            }
-
             return [
                 m("input", {oninput: (e) => row.name = e.target.value, value: row.name}),
                 m("select", {oninput: (e) => row.data = e.target.value, value: row.data}, [

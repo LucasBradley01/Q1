@@ -1,17 +1,18 @@
+/* Center the page */
 body{
     margin: 40px auto;
-    max-width: 650px;
+    max-width: 600px;
+    padding: 0 10px
+}
+
+/* Establish font for the entire website */
+button, input, select, div{
     line-height: 1.6;
     font-size: 18px;
     color: #444;
-    padding: 0 10px
-  }
-  
-  h1, h2, h3 {
-    line-height: 1.2
-  }
-  
+}
 
+/* Create a border around the root of width x px */
 .root {
     border-style: solid;
     padding-bottom: 20px;
@@ -43,4 +44,8 @@ body{
 
 .item {
     display: block;
+}
+
+#loading {
+    text-align: center;
 }

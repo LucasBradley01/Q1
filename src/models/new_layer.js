@@ -1,6 +1,14 @@
 var m = require("mithril");
+var err = require("../models/error_handler");
 
+/*
+This function of the system, creating a new layer, gets its own file because of the length of the
+function and the complexity of the operation. There are three steps to creating a new layer.
+
+First you must create the service, and you must add to definition (or add fields), and finally
+you must update the definition. All three steps are vital for a properly working layer.*/
 var new_layer = {
+    // Step one create feature service
     create: (create_input) => {
         state = JSON.parse(sessionStorage.getItem("state"));
         var body = new FormData();
@@ -9,6 +17,9 @@ var new_layer = {
         body.append("tags", "");
         body.append("typeKeywords", "ArcGIS Server,Data,Feature Access,Feature Service,Service,Hosted Service");
         body.append("outputType", "featureService");
+        
+        // Documentation for this api call and createParameters parameter is at:
+        // https://developers.arcgis.com/rest/users-groups-and-items/create-service.htm
         body.append("createParameters", JSON.stringify({
             "maxRecordCount": 2000,
             "supportedQueryFormats": "JSON",
@@ -48,6 +59,8 @@ var new_layer = {
             "name": create_input.title
         }))
 
+        // Documentation for this api call is at:
+        // https://developers.arcgis.com/rest/users-groups-and-items/create-service.htm
         m.request({
             url: "https://www.arcgis.com/sharing/rest/content/users/" + state.username + "/createService",
             method: "POST",
@@ -56,21 +69,19 @@ var new_layer = {
         .then((response) => {
             if (response.error == undefined) {
                 create_input.create_response = response;
+                // Commence step two
                 new_layer.add_fields(create_input);
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to create service");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     },
 
+    // Step two add to definition or add fields
     add_fields: (create_input) => {
+        // Documentation for addToDefinitoin api call and the addToDefinition parameter are available at:
+        // https://developers.arcgis.com/rest/services-reference/add-to-definition-feature-service-.htm
         var layer_format = {
             "layers": [
                 {
@@ -165,6 +176,9 @@ var new_layer = {
             ]
         };
 
+        // Here the fields are created and inserted into the
+        // layer_format object so that when the api call is made
+        // all the desired layers are created and in the proper way
         var squlType = "";
         var length = null;
         for (i = 0; i < create_input.fields.length; i++) {        
@@ -181,6 +195,7 @@ var new_layer = {
                     squlType = "sqlTypeFloat";
             }
             
+            // Below is the format for a field
             layer_format.layers[0].fields.push({
                 "name": create_input.fields[i].name,
                 "type": create_input.fields[i].data,
@@ -195,9 +210,6 @@ var new_layer = {
 
             layer_format.layers[0].templates[0].prototype.attributes[create_input.fields[i].name] = null;
         }
-
-        console.log(layer_format);
-
         var state = JSON.parse(sessionStorage.getItem("state"));
         var body = new FormData();
         body.append("token", state.token);
@@ -206,6 +218,8 @@ var new_layer = {
         var base_url = create_input.create_response.serviceurl + "/addToDefinition";
         var url = base_url.slice(0, 58) + "admin/" + base_url.slice(58);
 
+        // Documentation for addToDefinitoin api call is available at:
+        // https://developers.arcgis.com/rest/services-reference/add-to-definition-feature-service-.htm
         m.request({
             url: url,
             method: "POST",
@@ -216,17 +230,12 @@ var new_layer = {
                 new_layer.update_definition(create_input);
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to add fields");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     },
 
+    
     update_definition: (create_input) => {
         var state = JSON.parse(sessionStorage.getItem("state"));
         var body = new FormData();
@@ -260,13 +269,7 @@ var new_layer = {
                 m.route.set("/create");
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to add fields");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     }

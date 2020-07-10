@@ -1,4 +1,5 @@
 var m = require("mithril");
+var err = require("../models/error_handler");
 
 // Session is the used by the 
 var session = {
@@ -24,6 +25,7 @@ var session = {
         // How long a token will be valid in minutes
         body.append("expiration", "480");
         
+        // XML call to generate a token from arcgis
         return m.request({
             url: "https://www.arcgis.com/sharing/rest/generateToken",
             method: "POST",
@@ -41,13 +43,14 @@ var session = {
                 m.route.set("/home");
             }
             else {
-                console.log("ERROR: failed to generate token");
-                console.log(response);
+                err.handle(response);
             }
         })
     },
 
 
+    // Content is here because the homepage must use session.content
+    // to update the ui for all the different layers available
     content: [],
     load_content: (start) => {
         var state = JSON.parse(sessionStorage.getItem("state"));
@@ -63,37 +66,41 @@ var session = {
             body: body,
         })
         .then((response) => {
-            console.log(response);
-            
             if (response.error == undefined) {
+                // Only if this is the first index do we want to reset the
+                // content array, otherwise we may be adding content onto the end
                 if (response.start == 1) {
                     session.content = [];
                 }
                 
+                // Update session content and state content
                 session.content = session.content.concat(response.items);
                 state.content = session.content;
 
+                // If there were 100 responses then there may be more responses,
+                // because arcgis only returns 100 max layers. Therefore, the call
+                // is made again at the proper index
                 if (response.num == 100) {
                     session.load_content(response.start + response.num);
                 }
+                // Otherwise the process is complete and the state can be finally
+                // updated to reflect the downloaded content
                 else {
                     sessionStorage.setItem("state", JSON.stringify(state));
                 }                
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to load content");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     },
 
+    // Fields is needed for the same reason content is needed,
+    // because the ui needs a direct access to the fields of the layer
+    // through an array to properly update with mithril
     fields: [],
     load_layer: (index) => {
+        // Immediately rest the fields and load in the state
         session.fields = [];
         var state = JSON.parse(sessionStorage.getItem("state"));
 
@@ -102,22 +109,13 @@ var session = {
             method: "GET",
         })
         .then((response) => {
-            console.log(response);
-
             if (response.error == undefined) {
-                console.log(response);
                 session.fields = response.fields;
                 state.content[index].fields = response.fields;
                 sessionStorage.setItem("state", JSON.stringify(state));
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to load layer");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     },
@@ -127,6 +125,9 @@ var session = {
         var body = new FormData();
         body.append("f", "json");
         body.append("token", state.token);
+        // This is the format for the adds field. There needs to be geometry
+        // where x and y correspond to longitude and latitude respectively,
+        // and attributes to determine what each field equals.
         var add_input = {
             "geometry": {
                 "x": form_input.longitude,
@@ -154,13 +155,7 @@ var session = {
                 
             }
             else {
-                if (response.error.code == 403) {
-                    m.route.set("/login");
-                }
-                else {
-                    console.log("ERROR: failed to add to layer");
-                    console.log(response);
-                }
+                err.handle(response);
             }
         })
     },
