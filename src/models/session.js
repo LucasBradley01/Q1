@@ -63,6 +63,8 @@ var session = {
             body: body,
         })
         .then((response) => {
+            console.log(response);
+            
             if (response.error == undefined) {
                 if (response.start == 1) {
                     session.content = [];
@@ -100,7 +102,10 @@ var session = {
             method: "GET",
         })
         .then((response) => {
+            console.log(response);
+
             if (response.error == undefined) {
+                console.log(response);
                 session.fields = response.fields;
                 state.content[index].fields = response.fields;
                 sessionStorage.setItem("state", JSON.stringify(state));

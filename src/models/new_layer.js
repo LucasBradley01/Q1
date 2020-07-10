@@ -183,7 +183,7 @@ var new_layer = {
             
             layer_format.layers[0].fields.push({
                 "name": create_input.fields[i].name,
-                "type": "esriFieldType" + create_input.fields[i].data,
+                "type": create_input.fields[i].data,
                 "alias": create_input.fields[i].name,
                 "sqlType": squlType,
                 "nullable": true,
@@ -195,6 +195,8 @@ var new_layer = {
 
             layer_format.layers[0].templates[0].prototype.attributes[create_input.fields[i].name] = null;
         }
+
+        console.log(layer_format);
 
         var state = JSON.parse(sessionStorage.getItem("state"));
         var body = new FormData();
@@ -255,7 +257,7 @@ var new_layer = {
         })
         .then((response) => {
             if (response.error == undefined) {
-                console.log("DONE");
+                m.route.set("/create");
             }
             else {
                 if (response.error.code == 403) {
