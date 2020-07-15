@@ -1,5 +1,5 @@
 var m = require("mithril");
-const new_layer = require("../models/new_layer");
+const model = require("../models/mcreate");
 
 var create_input = {
     title: undefined,
@@ -31,12 +31,13 @@ var dynamic_form = {
 }
 
 module.exports = {
+    oninit: () => {model.init()},
     view: () => {
         return m("div[class=root]", [
             m("div[class=three-section]", [
                 m(m.route.Link, {class: "item", href: "/home"}, "Home"),
                 m("div"),
-                m("button[type=button]", {class: "logout", onclick: () => {sessionStorage.setItem("state", "null"); m.route.set("/login");}}, "Logout"),
+                m("button[type=button]", {class: "logout", onclick: () => {window.localStorage.removeItem("state"); m.route.set("/login");}}, "Logout"),
             ]),
 
             m("div[class=header]", [
@@ -54,7 +55,7 @@ module.exports = {
 
             m("div[class=three-section]", [
                 m("button", {onclick: () => {create_input.fields.push({name: "", data: "string"});}}, "Add Field"),
-                m("button[type=submit]", {onclick: () => {m.route.set("/loading"); new_layer.create(create_input)}}, "Submit"),
+                m("button[type=submit]", {onclick: () => {m.route.set("/loading"); model.create(create_input)}}, "Submit"),
                 m("button[type=button]", {onclick: () => {create_input.fields = [{name: undefined, data: "string"}]; create_input.title  = ""}}, "Clear All"),
             ]),
         ]);

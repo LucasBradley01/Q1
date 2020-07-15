@@ -1,5 +1,5 @@
 var m = require("mithril");
-var session = require("../models/session");
+var model = require("../models/mupdate");
 
 var form_input = {
     longitude: undefined,
@@ -7,17 +7,17 @@ var form_input = {
 };
 
 module.exports = {
-    oninit: () => {session.load_layer(m.route.param("index"))},
+    oninit: () => {model.init(); model.load_layer(m.route.param("index"));},
     view: () => {
         return m("div[class=root]", [
             m("div[class=three-section]", [
                 m(m.route.Link, {class: "item", href: "/home"}, "Home"),
                 m("div"),
-                m("button", {class: "logout", onclick: () => {sessionStorage.setItem("state", "null"); m.route.set("/login");}}, "Logout"),
+                m("button", {class: "logout", onclick: () => {window.localStorage.removeItem("state"); m.route.set("/login");}}, "Logout"),
             ]),
 
             m("div[class=header]", [
-                m("div", "Add Data to " + JSON.parse(sessionStorage.getItem("state")).content[m.route.param("index")].name),
+                m("div", "Add Data to " + JSON.parse(window.localStorage.getItem("state")).content[m.route.param("index")].name),
             ]),
             
             // Longitude and Latitude are useful for every entry and so
@@ -32,7 +32,7 @@ module.exports = {
                 m("div", "Latitude"),
                 m("div", "Double"),
                 m("input", {oninput: (e) => {form_input.latitude = e.target.value;}, value: form_input.latitude}),
-            ].concat(session.fields.map((item) => {
+            ].concat(model.fields.map((item) => {
                 
                 // OBJECTID is determined by the ArcGIS server so we don't
                 // want or need to input a value for it
@@ -62,11 +62,11 @@ module.exports = {
             }))),
 
             m("div[class=three-section]", [
-                m("button", {onclick: () => {session.add(m.route.param("index"), form_input);}}, "Update"),
+                m("button", {onclick: () => {model.add(m.route.param("index"), form_input);}}, "Update"),
                 m("button", {onclick: () => {
                     form_input.longitude = undefined;
                     form_input.latitude = undefined;
-                    session.fields.map((item) => {
+                    model.fields.map((item) => {
                         if (item.name != "OBJECTID") {
                             form_input[item.name] = undefined;
                         }

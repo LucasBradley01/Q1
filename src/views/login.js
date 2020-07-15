@@ -1,11 +1,11 @@
 var m = require("mithril");
-var session = require("../models/session");
+var model = require("../models/mlogin");
 
 var username = "";
 var password = "";
 
 module.exports = {
-    oninit: () => {session.init()},
+    oninit: () => {model.init()},
     view: () => {
         return m("div[class=root]", [
             m("div[class=three-section]", [
@@ -26,7 +26,7 @@ module.exports = {
                 m("div"),
                 
                 m("div"),
-                m("button", {onclick: () => {session.login(username, password);}}, "Login")
+                m("button", {onclick: () => {model.login(username, password);}}, "Login")
             ])
         ]);
     }

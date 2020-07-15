@@ -1,5 +1,4 @@
-
-var err = {
+var error = {
     handle: (response) => {
         if (response.error.code == 403 || response.error.code == 498) {
             m.route.set("/login");
@@ -13,4 +12,4 @@ var err = {
     }
 }
 
-module_exports = err;
+module.exports = error;

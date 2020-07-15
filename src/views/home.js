@@ -1,14 +1,14 @@
 var m = require("mithril");
-var session = require("../models/session");
+var model = require("../models/mhome");
 
 module.exports = {
-    oninit: () => {session.load_content(1)},
+    oninit: () => {model.init(1)},
     view: () => {
         return m("div[class=root]", [
             m("div[class=three-section]", [
                 m("div", "Home"),
                 m("div"),
-                m("button", {class: "logout", onclick: () => {sessionStorage.setItem("state", "null"); m.route.set("/login");}}, "Logout"),
+                m("button", {class: "logout", onclick: () => {window.localStorage.removeItem("state"); m.route.set("/login");}}, "Logout"),
             ]),
 
             m("div[class=one-section]", [
@@ -17,7 +17,7 @@ module.exports = {
 
             m("div[class=one-section]", [
                 m("div", "Your Layers"),
-                m("div", session.content.map((item, index) => {return m(m.route.Link, {class: "item", href: "/update/" + index}, item.name);}))
+                m("div", model.content.map((item, index) => {return m(m.route.Link, {class: "item", href: "/update/" + index}, item.name);}))
             ]),
         ]);
     }
