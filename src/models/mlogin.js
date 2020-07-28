@@ -1,5 +1,5 @@
 var m = require("mithril");
-var err = require("./error");
+var utl = require("./utl");
 
 var mlogin = {
     // Init organizes the data to be used by this session
@@ -11,8 +11,9 @@ var mlogin = {
                 username: null,
                 token: null,
                 expires: null,
-                content: null,
-                fields: null,
+                content: [],
+                fields: {},
+                pending: {},
             })
     
             window.localStorage.setItem("state", str);
@@ -58,7 +59,7 @@ var mlogin = {
                 m.route.set("/home");
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     }

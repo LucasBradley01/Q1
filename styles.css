@@ -7,7 +7,7 @@ body{
 
 /* Establish font for the entire website */
 button, input, select, div{
-    line-height: 1.6;
+    line-height: 1.6em;
     font-size: 18px;
     color: #444;
 }
@@ -16,28 +16,20 @@ button, input, select, div{
 .root {
     border-style: solid;
     padding-bottom: 20px;
-    width: 600px;
 }
 
 .header {
-    padding-top: 10px;
+    font-weight: bold;
+    padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
-    font-weight: bold;
 }
 
 .three-section {
-    padding-top: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
-
     display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: auto;
-}
-
-.one-section {
-    padding-top: 10px;
+	grid-template-columns: 34% 33% 33%;
+    grid-template-rows: auto;
+    padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -46,6 +38,16 @@ button, input, select, div{
     display: block;
 }
 
-#loading {
-    text-align: center;
+.icon{
+    height: 1.6em;
+    display: block;
+}
+
+.one {
+    display: grid;
+	grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }

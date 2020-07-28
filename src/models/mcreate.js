@@ -1,5 +1,5 @@
 var m = require("mithril");
-var err = require("./error");
+var utl = require("./utl");
 
 /*
 This function of the system, creating a new layer, gets its own file because of the length of the
@@ -8,23 +8,8 @@ function and the complexity of the operation. There are three steps to creating 
 First you must create the service, and you must add to definition (or add fields), and finally
 you must update the definition. All three steps are vital for a properly working layer.*/
 var mcreate = {
-    init: () => {
-        var rawState = window.localStorage.getItem("state");
-        if (rawState === null) {
-            m.route.set("/login");
-            return;
-        }
-
-        var state = JSON.parse(rawState);
-        var currentTime = new Date();
-        if (state.expires === null || state.expires < currentTime.getTime()) {
-            m.route.set("/login");
-            return;
-        }
-    },
-    
     // Step one create feature service
-    create: (create_input) => {
+    create: (createInput) => {
         state = JSON.parse(window.localStorage.getItem("state"));
         var body = new FormData();
         body.append("token", state.token);
@@ -71,7 +56,7 @@ var mcreate = {
                 "wkid": 4326
             },
             "tables": [],
-            "name": create_input.title
+            "name": createInput.title
         }))
 
         // Documentation for this api call is at:
@@ -83,21 +68,21 @@ var mcreate = {
         })
         .then((response) => {
             if (response.error == undefined) {
-                create_input.create_response = response;
+                createInput.createResponse = response;
                 // Commence step two
-                mcreate.add_fields(create_input);
+                mcreate.add_fields(createInput);
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     },
 
     // Step two add to definition or add fields
-    add_fields: (create_input) => {
+    add_fields: (createInput) => {
         // Documentation for addToDefinitoin api call and the addToDefinition parameter are available at:
         // https://developers.arcgis.com/rest/services-reference/add-to-definition-feature-service-.htm
-        var layer_format = {
+        var layerFormat = {
             "layers": [
                 {
                     "adminLayerInfo":
@@ -107,7 +92,7 @@ var mcreate = {
                             "srid":4326
                         }
                     },
-                    "name": create_input.title,
+                    "name": createInput.title,
                     "type": "Feature Layer",
                     "displayField": "",
                     "description": "",
@@ -192,13 +177,13 @@ var mcreate = {
         };
 
         // Here the fields are created and inserted into the
-        // layer_format object so that when the api call is made
+        // layerFormat object so that when the api call is made
         // all the desired layers are created and in the proper way
         var squlType = "";
         var length = null;
-        for (i = 0; i < create_input.fields.length; i++) {        
+        for (i = 0; i < createInput.fields.length; i++) {        
             length = null;
-            switch(create_input.fields[i].type) {
+            switch(createInput.fields[i].type) {
                 case "esriFieldTypeString":
                     squlType = "sqlTypeNVarchar";
                     length = 256;
@@ -211,10 +196,10 @@ var mcreate = {
             }
             
             // Below is the format for a field
-            layer_format.layers[0].fields.push({
-                "name": create_input.fields[i].name,
-                "type": create_input.fields[i].data,
-                "alias": create_input.fields[i].name,
+            layerFormat.layers[0].fields.push({
+                "name": createInput.fields[i].name,
+                "type": createInput.fields[i].data,
+                "alias": createInput.fields[i].name,
                 "sqlType": squlType,
                 "nullable": true,
                 "editable": true,
@@ -223,14 +208,14 @@ var mcreate = {
                 "length": length
             });
 
-            layer_format.layers[0].templates[0].prototype.attributes[create_input.fields[i].name] = null;
+            layerFormat.layers[0].templates[0].prototype.attributes[createInput.fields[i].name] = null;
         }
         var state = JSON.parse(window.localStorage.getItem("state"));
         var body = new FormData();
         body.append("token", state.token);
         body.append("f", "json");
-        body.append("addToDefinition", JSON.stringify(layer_format));
-        var base_url = create_input.create_response.serviceurl + "/addToDefinition";
+        body.append("addToDefinition", JSON.stringify(layerFormat));
+        var base_url = createInput.createResponse.serviceurl + "/addToDefinition";
         var url = base_url.slice(0, 58) + "admin/" + base_url.slice(58);
 
         // Documentation for addToDefinitoin api call is available at:
@@ -242,16 +227,16 @@ var mcreate = {
         })
         .then((response) => {
             if (response.error == undefined) {
-                mcreate.update_definition(create_input);
+                mcreate.update_definition(createInput);
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     },
 
 
-    update_definition: (create_input) => {
+    update_definition: (createInput) => {
         var state = JSON.parse(window.localStorage.getItem("state"));
         var body = new FormData();
         body.append("token", state.token);
@@ -271,7 +256,7 @@ var mcreate = {
             }
         }));
         
-        var base_url = create_input.create_response.serviceurl + "/updateDefinition";
+        var base_url = createInput.createResponse.serviceurl + "/updateDefinition";
         var url = base_url.slice(0, 58) + "admin/" + base_url.slice(58);
 
         m.request({
@@ -284,7 +269,7 @@ var mcreate = {
                 m.route.set("/create");
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     }

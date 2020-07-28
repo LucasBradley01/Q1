@@ -1,30 +1,20 @@
 var m = require("mithril");
-var err = require("./error");
+var utl = require("./utl");
 
 var mupdate = {
-    init: () => {
-        var rawState = window.localStorage.getItem("state");
-        if (rawState === null) {
-            m.route.set("/login");
-            return;
-        }
-
-        var state = JSON.parse(rawState);
-        var currentTime = new Date();
-        if (state.expires === null || state.expires < currentTime.getTime()) {
-            m.route.set("/login");
-            return;
-        }  
-    },
-
-    // Fields is needed for the same reason content is needed,
-    // because the ui needs a direct access to the fields of the layer
+    // Fields is needed for the same reason content on the homepage
+    // is needed, because the ui needs a direct access to the fields of the layer
     // through an array to properly update with mithril
     fields: [],
     load_layer: (index) => {
-        // Immediately rest the fields and load in the state
+        // Immediately reset the fields and load in the state        
         mupdate.fields = [];
         var state = JSON.parse(window.localStorage.getItem("state"));
+        var itemName = state.content[index].name;
+
+        if (state.fields[itemName] !== null && state.fields[itemName] !== undefined) {
+            mupdate.fields = state.fields[itemName];
+        }
 
         m.request({
             url: state.content[index].url + "/0?f=json&token=" + state.token,
@@ -33,11 +23,11 @@ var mupdate = {
         .then((response) => {
             if (response.error == undefined) {
                 mupdate.fields = response.fields;
-                state.content[index].fields = response.fields;
+                state.fields[itemName] = response.fields;
                 window.localStorage.setItem("state", JSON.stringify(state));
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     },
@@ -50,7 +40,7 @@ var mupdate = {
         // This is the format for the adds field. There needs to be geometry
         // where x and y correspond to longitude and latitude respectively,
         // and attributes to determine what each field equals.
-        var add_input = {
+        var addInput = {
             "geometry": {
                 "x": form_input.longitude,
                 "y": form_input.latitude,
@@ -60,12 +50,20 @@ var mupdate = {
 
         // We begin at 1 because element 0 is object id which we do not want
         // to push to ArcGIS, this is because ArcGIS internally and automatically
-        // calculated OBJECTID
-        var fields_array = state.content[index].fields;
-        for (i = 1; i < fields_array.length; i++) {
-            add_input.attributes[fields_array[i].name] = form_input[fields_array[i].name];
+        // calculates OBJECTID
+        var itemName = state.content[index].name;
+        var fieldsArray = state.fields[itemName];
+        for (i = 1; i < fieldsArray.length; i++) {
+            addInput.attributes[fieldsArray[i].name] = form_input[fieldsArray[i].name];
         }
-        body.append("adds", JSON.stringify(add_input))
+        body.append("adds", JSON.stringify(addInput))
+
+        // Add this request onto the pending for this specific layer
+        if (state.pending[itemName] === null || state.pending[itemName] === undefined) {
+            state.pending[itemName] = [];
+        }
+        state.pending[itemName].push(addInput);
+        window.localStorage.setItem("state", JSON.stringify(state));
 
         m.request({
             url: state.content[index].url + "/0/applyEdits",
@@ -73,11 +71,11 @@ var mupdate = {
             body: body,
         })
         .then((response) => {
-            if (response.error == undefined) {
-                
+            if (response.error === undefined) {
+
             }
             else {
-                err.handle(response);
+                utl.handle(response);
             }
         })
     },

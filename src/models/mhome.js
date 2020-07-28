@@ -1,23 +1,12 @@
 var m = require("mithril");
-var err = require("./error");
+var utl = require("./utl");
 
 var mhome = {
     // Content is here because the homepage must use mhome.content
     // to update the ui for all the different layers available
     content: [],
-    init: (start) => {
-        var rawState = window.localStorage.getItem("state");
-        if (rawState === null) {
-            m.route.set("/login");
-            return;
-        }
-
-        var state = JSON.parse(rawState);
-        var currentTime = new Date();
-        if (state.expires === null || state.expires < currentTime.getTime()) {
-            m.route.set("/login");
-            return;
-        }
+    load_content: (start) => {
+        var state = JSON.parse(window.localStorage.getItem("state"));
         
         if (state.content != null) {
             mhome.content = state.content;
@@ -60,8 +49,7 @@ var mhome = {
                 }                
             }
             else {
-                //err.handle(response);
-                console.log(response);
+                utl.handle(response);
             }
         })
     },

@@ -5,7 +5,9 @@ var username = "";
 var password = "";
 
 module.exports = {
-    oninit: () => {model.init()},
+    oninit: () => {
+        model.init()
+    },
     view: () => {
         return m("div[class=root]", [
             m("div[class=three-section]", [
@@ -14,7 +16,11 @@ module.exports = {
                 m("div"),
 
                 m("div"),
-                m("input", {oninput: (e) => {username = e.target.value}}),
+                m("input", {
+                    oninput: (e) => {
+                        username = e.target.value
+                    }
+                }),
                 m("div"),
 
                 m("div"),
@@ -22,11 +28,18 @@ module.exports = {
                 m("div"),
 
                 m("div"),
-                m("input[type=password]", {oninput: (e) => {password = e.target.value}}),
+                m("input[type=password]", {
+                    oninput: (e) => {
+                        password = e.target.value
+                    }}),
                 m("div"),
                 
                 m("div"),
-                m("button", {onclick: () => {model.login(username, password);}}, "Login")
+                m("button", {
+                    onclick: () => {
+                        model.login(username, password);
+                    }
+                }, "Login")
             ])
         ]);
     }
