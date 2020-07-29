@@ -8,7 +8,7 @@ body{
 /* Establish font for the entire website */
 button, input, select, div{
     line-height: 1.6em;
-    font-size: 18px;
+    font-size: 20px;
     color: #444;
 }
 
@@ -34,20 +34,28 @@ button, input, select, div{
     padding-right: 5px;
 }
 
+/* Home page grid elements */
 .item {
+    padding-bottom: 5px;
     display: block;
 }
 
-.icon{
+/* Home page loaded and updated svg symbols*/
+.rsvg{
+    fill: red;
     height: 1.6em;
+    width: 1.6em;
     display: block;
 }
 
-.one {
-    display: grid;
-	grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    padding-top: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
+.rsvg:hover {
+    fill: #ffcccb;
 }
+
+.gsvg{
+    fill: green;
+    height: 1.6em;
+    width: 1.6em;
+    display: block;
+}
+  

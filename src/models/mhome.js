@@ -53,6 +53,10 @@ var mhome = {
             }
         })
     },
+
+    update: () => {
+        var state = JSON.parse(window.localStorage.getItem("state"));
+    }
 }
 
 module.exports = mhome;

@@ -96,7 +96,6 @@ module.exports = {
                 }, "Add Field"),
                 m("button[type=submit]", {
                     onclick: () => {
-                        m.route.set("/loading");
                         model.create(createInput)
                     }
                 }, "Submit"),

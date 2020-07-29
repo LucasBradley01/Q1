@@ -60,10 +60,8 @@ var mupdate = {
 
         // Add this request onto the pending for this specific layer
         if (state.pending[itemName] === null || state.pending[itemName] === undefined) {
-            state.pending[itemName] = [];
+            state.pending[itemName] = {};
         }
-        state.pending[itemName].push(addInput);
-        window.localStorage.setItem("state", JSON.stringify(state));
 
         m.request({
             url: state.content[index].url + "/0/applyEdits",
@@ -75,6 +73,8 @@ var mupdate = {
 
             }
             else {
+                state.pending[itemName].push(addInput);
+                window.localStorage.setItem("state", JSON.stringify(state));
                 utl.handle(response);
             }
         })

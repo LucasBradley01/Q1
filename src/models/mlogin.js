@@ -7,6 +7,20 @@ var mlogin = {
         var rawState = window.localStorage.getItem("state");
 
         if (rawState === null) {
+            /*
+            var str = JSON.stringify({
+                username: null,
+                token: null,
+                expires: null,
+                layers: [{
+                    content: {},
+                    field: {},
+                    pending: [],
+                    loading: false,
+                    updating: false,
+                }],
+            })*/
+
             var str = JSON.stringify({
                 username: null,
                 token: null,
