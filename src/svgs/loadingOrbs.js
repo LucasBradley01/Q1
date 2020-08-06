@@ -1,5 +1,5 @@
 var m = require("mithril");
-const { redraw } = require("mithril");
+
 
 /*
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
     }
 }
 */
-
+/*
 module.exports = {
     view: () => {
         return m("svg", {
@@ -77,5 +77,30 @@ module.exports = {
                 
             )
         )
+    }
+}*/
+
+module.exports = {
+    view: () => {
+        return [
+            m("circle", {
+                id: "l1",
+                cx: 4,
+                cy: 10,
+                r: 2,
+            }),
+            m("circle", {
+                id: "l2",
+                cx: 10,
+                cy: 10,
+                r: 2,
+            }),
+            m("circle", {
+                id: "l3",
+                cx: 16,
+                cy: 10,
+                r: 2,
+            }),
+        ]
     }
 }

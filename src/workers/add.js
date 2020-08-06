@@ -1,19 +1,19 @@
 var m = require("mithril");
 var utl = require("./utl");
 
-var mupdate = {
+var add = {
     // Fields is needed for the same reason content on the homepage
     // is needed, because the ui needs a direct access to the fields of the layer
-    // through an array to properly update with mithril
+    // through an array to properly add with mithril
     fields: [],
-    load_layer: (index) => {
+    loadLayer: (index) => {
         // Immediately reset the fields and load in the state        
-        mupdate.fields = [];
-        var state = JSON.parse(window.localStorage.getItem("state"));
-        var itemName = state.content[index].name;
+        add.fields = [];
 
-        if (state.fields[itemName] !== null && state.fields[itemName] !== undefined) {
-            mupdate.fields = state.fields[itemName];
+        var state = JSON.parse(localStorage.getItem("state"));
+
+        if (state.fields[index] !== null && state.fields[index] !== undefined) {
+            add.fields = state.fields[index];
         }
 
         m.request({
@@ -22,9 +22,9 @@ var mupdate = {
         })
         .then((response) => {
             if (response.error == undefined) {
-                mupdate.fields = response.fields;
-                state.fields[itemName] = response.fields;
-                window.localStorage.setItem("state", JSON.stringify(state));
+                add.fields = response.fields;
+                state.fields[index] = response.fields;
+                localStorage.setItem("state", JSON.stringify(state));
             }
             else {
                 utl.handle(response);
@@ -33,7 +33,8 @@ var mupdate = {
     },
 
     add: (index, form_input) => {    
-        var state = JSON.parse(window.localStorage.getItem("state"));
+        var state = JSON.parse(localStorage.getItem("state"));
+        
         var body = new FormData();
         body.append("f", "json");
         body.append("token", state.token);
@@ -51,16 +52,15 @@ var mupdate = {
         // We begin at 1 because element 0 is object id which we do not want
         // to push to ArcGIS, this is because ArcGIS internally and automatically
         // calculates OBJECTID
-        var itemName = state.content[index].name;
-        var fieldsArray = state.fields[itemName];
+        var fieldsArray = state.fields;
         for (i = 1; i < fieldsArray.length; i++) {
             addInput.attributes[fieldsArray[i].name] = form_input[fieldsArray[i].name];
         }
         body.append("adds", JSON.stringify(addInput))
 
         // Add this request onto the pending for this specific layer
-        if (state.pending[itemName] === null || state.pending[itemName] === undefined) {
-            state.pending[itemName] = {};
+        if (!state.pending[index]) {
+            state.pending[index] = {};
         }
 
         m.request({
@@ -73,12 +73,12 @@ var mupdate = {
 
             }
             else {
-                state.pending[itemName].push(addInput);
-                window.localStorage.setItem("state", JSON.stringify(state));
+                state.pending[index].push(addInput);
+                localStorage.setItem("state", JSON.stringify(state));
                 utl.handle(response);
             }
         })
     },
 }
 
-module.exports = mupdate;
+module.exports = add;

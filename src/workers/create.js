@@ -7,7 +7,7 @@ function and the complexity of the operation. There are three steps to creating 
 
 First you must create the service, and you must add to definition (or add fields), and finally
 you must update the definition. All three steps are vital for a properly working layer.*/
-var mcreate = {
+var create = {
     // Step one create feature service
     create: (createInput) => {
         state = JSON.parse(window.localStorage.getItem("state"));
@@ -70,7 +70,7 @@ var mcreate = {
             if (response.error == undefined) {
                 createInput.createResponse = response;
                 // Commence step two
-                mcreate.add_fields(createInput);
+                create.add_fields(createInput);
             }
             else {
                 utl.handle(response);
@@ -227,7 +227,7 @@ var mcreate = {
         })
         .then((response) => {
             if (response.error == undefined) {
-                mcreate.update_definition(createInput);
+                create.update_definition(createInput);
             }
             else {
                 utl.handle(response);
@@ -275,4 +275,4 @@ var mcreate = {
     }
 }
 
-module.exports = mcreate;
+module.exports = create;

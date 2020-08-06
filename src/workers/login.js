@@ -1,35 +1,23 @@
 var m = require("mithril");
 var utl = require("./utl");
 
-var mlogin = {
+var login = {
     // Init organizes the data to be used by this session
     init: () => {
         var rawState = window.localStorage.getItem("state");
 
         if (rawState === null) {
-            /*
-            var str = JSON.stringify({
-                username: null,
-                token: null,
-                expires: null,
-                layers: [{
-                    content: {},
-                    field: {},
-                    pending: [],
-                    loading: false,
-                    updating: false,
-                }],
-            })*/
-
             var str = JSON.stringify({
                 username: null,
                 token: null,
                 expires: null,
                 content: [],
-                fields: {},
-                pending: {},
+                fields: [],
+                pending: [],
+                loading: [],
+                syncing: [],
             })
-    
+
             window.localStorage.setItem("state", str);
         }
         else {
@@ -79,4 +67,4 @@ var mlogin = {
     }
 }
 
-module.exports = mlogin;
+module.exports = login;
